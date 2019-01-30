@@ -3,6 +3,7 @@
 <html>
 <head>
     <title>BR - Book Reviews</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <style>
     *{
       margin:0px;
@@ -21,7 +22,7 @@
       font-size: 17pt;
       font-family: arial;
       margin-left: 4%;
-      color:grey;
+      color:#A4A4A4;
     }
     #home:hover{
       color:LightGrey;
@@ -33,7 +34,7 @@
       position: absolute;
       top:2%;
       left:85%;
-      color:grey;
+      color:#A4A4A4;
     }
     #login:hover{
       color:lightgrey;
@@ -45,7 +46,7 @@
       position:absolute;
       top:2%;
       left:90%;
-      color:grey;
+      color:#A4A4A4;
     }
     #registro:hover{
       color: lightgrey;
@@ -58,12 +59,14 @@
 </head>
   <body>
 
+    {%block body%}
+    {%endblock%}
+
   <a id='home'     href="home.html">      Home      </a>
   <a id='login'    href="login.html">     Login     </a>
   <a id='registro' href="registro.html">  Registro  </a>
 
-  {%block body%}
-  {%endblock%}
+
 
 
   </body>
