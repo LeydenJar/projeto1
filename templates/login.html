@@ -1,96 +1,90 @@
-<!DOCTYPE html>
+{%extends "layout.html"%}
 
-<html>
-<head>
-  <title>Login</title>
-  <style>
+{% block style %}
+* {
+margin: 0;
+padding:0;}
 
-    * {
-    margin: 0;
-    padding:0;}
+body{
+  min-height:100vh;
+  width: 100%;
+  height: 100%;
+  font-family: arial;
+  font-size: 11pt;
+}
 
-    body{
-      min-height:100vh;
-      width: 100%;
-      height: 100%;
-    }
+.fundo-out{
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
 
-    .fundo-out{
-      overflow: hidden;
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
+.fundo-in{
+  position: fixed; /* posição fixa para que a possível rolagem da tela não revele espaços em branco */
+  width: 100%;
+  height: 100%;
+}
+.fundo-in img{
+  height:100%;
+  position:absolute;
 
-    .fundo-in{
-      position: fixed; /* posição fixa para que a possível rolagem da tela não revele espaços em branco */
-      width: 100%;
-      height: 100%;
-    }
-    .fundo-in img{
-      height:100%;
-      position:absolute;
+}
+.forma{
+  min-height: 100vh;
+  position: relative;
+}
+.forma input{
+  text-align: center;
+}
+form{
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-49%)
+}
+input{
+  margin:4px;
+}
+#but {
+  margin-top:5px;
+  width:40%;
+  height:auto;
+  border-color: white;
+  display: inline-block;
+  position: absolute;
+  left:30%
+}
+#logo {
+  position:absolute;
+  top:45%;
+  left:50%;
+  transform:translateY(-50%) translateX(-50%)
 
-    }
-    .forma{
-      min-height: 100vh;
-      position: relative;
-    }
-    .forma input{
-      text-align: center;
-    }
-    form{
-      position: absolute;
-      top: 60%;
-      left: 50%;
-      transform: translateY(-50%) translateX(-49%)
-    }
-    input{
-      margin:4px;
-    }
-    #but {
-      margin-top:5px;
-      width:30%;
-      height:auto;
-      border-color: white;
-      display: inline-block;
-      position: absolute;
-      left:29%
-    }
-    #logo {
-      position:absolute;
-      top:45%;
-      left:50%;
-      transform:translateY(-50%) translateX(-50%)
+}
+#logo img{
+  height:600px;
+}
 
-    }
-    #logo img{
-      height:600px;
-    }
+{%endblock%}
 
-  </style>
-</head>
-<body>
+{%block body%}
+<div class="fundo-out">
+  <div class="fundo-in">
+    <img src="static/login.jpg">
+  </div>
+</div>
 
-  <div class="fundo-out">
-    <div class="fundo-in">
-      <img src="../Imagens/login.jpg">
+<div id="logo" >
+  <img src="static/Logo.png">
+</div>
+
+    <div class="forma">
+        <form >
+          <input type='text' placeholder='username' name='username'><br/>
+          <input type='password' placeholder='password' name='password'><br/>
+          <button id='but' type='button' class='btn btn-success'>Log-in</button>
+        </form>
     </div>
-  </div>
 
-  <div id="logo" class="container">
-    <img src="../Imagens/Logo.png">
-  </div>
-
-      <div class="forma">
-          <form >
-            <input type='text' placeholder='username' name='username'><br/>
-            <input type='password' placeholder='password' name='password'><br/>
-            <input id='check' type='checkbox' name='termos' value='accept'>
-            Aceito os <a href='termos.html'>termos e condições</a>
-            <button id='but'>Login</button>
-          </form>
-      </div>
-
-</body>
-</html>
+{%endblock%}
