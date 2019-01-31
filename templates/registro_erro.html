@@ -1,0 +1,114 @@
+{%extends "layout.html"%}
+
+{% block style %}
+* {
+margin: 0;
+padding:0;}
+
+body{
+  min-height:100vh;
+  width: 100%;
+  height: 100%;
+  font-family: arial;
+  font-size: 11pt;
+}
+
+.fundo-out{
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.fundo-in{
+  position: fixed; /* posição fixa para que a possível rolagem da tela não revele espaços em branco */
+  width: 100%;
+  height: 100%;
+}
+.fundo-in img{
+  height:100%;
+  position:absolute;
+
+}
+.forma{
+  min-height: 100vh;
+  position: relative;
+}
+.forma input{
+  text-align: center;
+}
+form{
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-49%)
+}
+input{
+  margin:4px;
+}
+#but {
+  margin-top:5px;
+  width:38%;
+  height:auto;
+  border-color: white;
+  display: inline-block;
+  position: absolute;
+  left:25%
+}
+#logo {
+  position:absolute;
+  top:28%;
+  left:48%;
+  transform:translateY(-50%) translateX(-50%)
+
+}
+#logo img{
+  height:500px;
+}
+
+#termos{
+  font-family:arial;
+  font-size:18pt;
+}
+
+#erro{
+  position: absolute;
+  top:38%;
+  left:50%;
+  transform: translateX(-50%);
+  textalign:center;
+
+}
+
+{%endblock%}
+
+{%block body%}
+<div class="fundo-out">
+  <div class="fundo-in">
+    <img src="static/login.jpg">
+  </div>
+</div>
+
+
+
+<div id="logo" >
+  <img src="static/Logo.png">
+</div>
+
+<div class="alert alert-danger" role="alert" id='erro'>
+{{erro}}
+</div>
+
+    <div class="forma">
+        <form method='post' action='{{url_for("validar")}}'>
+          <input type='text' placeholder='username' name='username'><br/>
+          <input type='password' placeholder='password' name='password'><br/>
+          <input type='text' placeholder='e-mail' name='e-mail'><br/>
+          <input type='text' placeholder='confirmar e-mail' name='confirmar e-mail'><br/>
+          <input id='check' type='checkbox' name='termos' value='accept'>
+            Aceito os <a href='termos.html'>termos e condições</a>
+          <button id='but' type='submit' class='btn btn-success'>Registrar</button>
+        </form>
+    </div>
+
+{%endblock%}
