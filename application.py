@@ -59,9 +59,16 @@ def validar():
         {"user":usuario, "pass":senha, "email":email})
         db.commit()
         return render_template("sucesso.html")
+    elif tamanho_senha<=5 or tamanho_username<=5:
+        return render_template("registro_erro.html", erro='erro: usuario e senha devem ter no minimo 6 caracteres')
+    elif not vemail:
+        return render_template("registro_erro.html", erro='erro: os e-mails digitados são diferentes')
+    elif not userv:
+        return render_template("registro_erro.html", erro='erro: O username ja existe, escolha outro')
+    elif not emailv:
+        return render_template("registro_erro.html", erro='erro: O email ja existe, escolha outro')
     else:
-        return render_template("registro.html")
-
+        return render_template("registro_erro.html", erro='erro: É necessário aceitar os termos')
 
 @app.route("/validarl", methods=["POST"])
 def validarl():
