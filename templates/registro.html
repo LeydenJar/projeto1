@@ -84,14 +84,14 @@ input{
 </div>
 
     <div class="forma">
-        <form >
+        <form method='post' action='{{url_for("validar")}}'>
           <input type='text' placeholder='username' name='username'><br/>
           <input type='password' placeholder='password' name='password'><br/>
           <input type='text' placeholder='e-mail' name='e-mail'><br/>
           <input type='text' placeholder='confirmar e-mail' name='confirmar e-mail'><br/>
           <input id='check' type='checkbox' name='termos' value='accept'>
             Aceito os <a href='termos.html'>termos e condições</a>
-          <button id='but' type='button' class='btn btn-success'>Registrar</button>
+          <button id='but' type='submit' class='btn btn-success'>Registrar</button>
         </form>
     </div>
 

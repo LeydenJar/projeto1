@@ -80,10 +80,10 @@ input{
 </div>
 
     <div class="forma">
-        <form >
+        <form action='{{url_for("validarl")}}' method='post'>
           <input type='text' placeholder='username' name='username'><br/>
           <input type='password' placeholder='password' name='password'><br/>
-          <button id='but' type='button' class='btn btn-success'>Log-in</button>
+          <button id='but' type='submit' class='btn btn-success'>Log-in</button>
         </form>
     </div>
 
