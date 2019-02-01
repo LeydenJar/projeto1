@@ -57,13 +57,21 @@ input{
 }
 #logo {
   position:absolute;
-  top:45%;
+  top:37%;
   left:50%;
   transform:translateY(-50%) translateX(-50%)
 
 }
 #logo img{
   height:600px;
+}
+
+#erro{
+  position:absolute;
+  top:47%;
+  left:50%;
+  transform:translateX(-50%);
+
 }
 
 {%endblock%}
@@ -77,6 +85,10 @@ input{
 
 <div id="logo" >
   <img src="static/Logo.png">
+</div>
+
+<div class="alert alert-danger" role="alert" id='erro'>
+{{erro}}
 </div>
 
     <div class="forma">

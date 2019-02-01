@@ -13,9 +13,22 @@ db = scoped_session(sessionmaker(bind=engine))
 def home():
     return render_template("home.html")
 
-@app.route("/login")
+@app.route("/login", methods=['GET', 'POST'])
 def login():
-    return render_template("login.html")
+    if request.method=='GET':
+        return render_template("login.html")
+    else:
+            user     = request.form.get("username")
+            password = request.form.get("password")
+            v = db.execute(
+                "SELECT * FROM users WHERE username = :user AND password = :pass",
+                 {"user":user, "pass":password}
+                                                    ).fetchall()
+            if v != []:
+                return render_template("layout2.html", retorno=v)
+            else:
+                return render_template("login_erro.html", erro='usuário ou senha incorretos')
+
 
 @app.route("/registro", methods=['POST', 'GET'])
 def registro():
@@ -67,20 +80,6 @@ def registro():
             return render_template("registro_erro.html", erro='erro: O email ja existe, escolha outro')
         else:
             return render_template("registro_erro.html", erro='erro: É necessário aceitar os termos')
-
-
-@app.route("/validarl", methods=["POST"])
-def validarl():
-    user     = request.form.get("username")
-    password = request.form.get("password")
-    v = db.execute(
-        "SELECT * FROM users WHERE username = :user AND password = :pass",
-         {"user":user, "pass":password}
-                                            ).fetchall()
-    if v != []:
-        return render_template("layout2.html", retorno=v)
-    else:
-        return render_template("login.html")
 
 
 
