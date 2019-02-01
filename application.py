@@ -9,9 +9,27 @@ app = Flask(__name__)
 engine = create_engine("postgresql://postgres:123@localhost/projeto1db")
 db = scoped_session(sessionmaker(bind=engine))
 
-@app.route("/")
+
+@app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template("home.html")
+    if request.method == 'GET':
+        bk = db.execute('SELECT * FROM books LIMIT 15')
+        return render_template("home.html", bk=bk)
+    else:
+        tipo= request.form.get('tipo')
+        input= request.form.get('input')
+        if input == '':
+            bk = db.execute('SELECT * FROM books LIMIT 15')
+        elif tipo == 'autor':
+            bk = db.execute('SELECT * FROM books WHERE author ILIKE :autor LIMIT 15', {"autor": '%'+input+'%'})
+        elif tipo == 'livro':
+            bk = db.execute('SELECT * FROM books WHERE title ILIKE :livro LIMIT 15', {"livro": '%'+input+'%'})
+        elif tipo == 'ano':
+            bk = db.execute('SELECT * FROM books WHERE year = :y LIMIT 15', {"y": input})
+        else:
+            bk = db.execute('SELECT * FROM books WHERE isbn ILIKE :isbn LIMIT 15', {"isbn": '%'+input+'%'})
+        return render_template("home.html", bk=bk)
+
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():

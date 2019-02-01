@@ -16,33 +16,51 @@
   text-align:center;
 }
 
-#destaques{
+#texto{
   position:absolute;
   top:35%;
-  
-
   text-align=center;
+}
+
+#links{
+  position:absolute;
+  top:45%;
+  text-align=center;
+  width:90vw;
+}
+
+.alert-primary{
+  width:30%;
+
+
 }
 {%endblock%}
 
 {%block body%}
 
 <div id='pesquisa'>
-  <form>
+  <form action="{{url_for('home')}}" method='post'>
     <input type='text' name = 'input' placeholder='Pesquisar'></input>
     por
-    <select name = 'pesquisar_por' placeholder='Pesquisar Por'>
+    <select name = 'tipo'>
       <option value='autor'>Autor</option>
       <option value='livro'>Livro</option>
       <option value='ano'>Ano</option>
       <option value='isbn'>ISBN</option>
     </select>
+    <button type='submit' class='btn btn-success'>Pesquisar<button>
   </form>
 </div>
 
-<div id='destaques'>
-  <h2>Olá user, veja os destaques da semana:<h2>
+<div id='texto'>
+  <h2>Olá user, veja os resultados da sua pesquisa:<h2>
 </div>
-
+<div id='links'>
+{%for isbn, book, author, year in bk:%}
+<div class="alert alert-primary" role="alert">
+   <a> {{book}}, {{author}}, {{year}}, {{isbn}} </a>
+ </div>
+{%endfor%}
+</div>
 
 {%endblock%}
