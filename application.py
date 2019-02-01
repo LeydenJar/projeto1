@@ -25,7 +25,7 @@ def login():
                  {"user":user, "pass":password}
                                                     ).fetchall()
             if v != []:
-                return render_template("layout2.html", retorno=v)
+                return render_template("home.html")
             else:
                 return render_template("login_erro.html", erro='usuário ou senha incorretos')
 

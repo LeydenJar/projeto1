@@ -1,9 +1,48 @@
-</<!DOCTYPE html>
-<html>
-  <head>
-    <title>Home</title>
-  </head>
-  <body>
-    <h1>Pagina em Construção</h1>
-  </body>
-</html>
+{%extends "layout.html"%}
+
+{%block style%}
+#pesquisa{
+  width:130vh;
+  position:absolute;
+  top:10%;
+  left:50%;
+  transform:TranslateX(-50%);
+
+}
+
+#pesquisa input{
+  width:60%;
+  margin:50px;
+  text-align:center;
+}
+
+#destaques{
+  position:absolute;
+  top:35%;
+  
+
+  text-align=center;
+}
+{%endblock%}
+
+{%block body%}
+
+<div id='pesquisa'>
+  <form>
+    <input type='text' name = 'input' placeholder='Pesquisar'></input>
+    por
+    <select name = 'pesquisar_por' placeholder='Pesquisar Por'>
+      <option value='autor'>Autor</option>
+      <option value='livro'>Livro</option>
+      <option value='ano'>Ano</option>
+      <option value='isbn'>ISBN</option>
+    </select>
+  </form>
+</div>
+
+<div id='destaques'>
+  <h2>Olá user, veja os destaques da semana:<h2>
+</div>
+
+
+{%endblock%}
