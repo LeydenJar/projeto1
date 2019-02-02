@@ -58,7 +58,7 @@
 <div id='links'>
 {%for isbn, book, author, year in bk:%}
 <div class="alert alert-primary" role="alert">
-   <a> {{book}}, {{author}}, {{year}}, {{isbn}} </a>
+   <a href='/{{book}}'> {{book}}, {{author}}, {{year}}, {{isbn}} </a>
  </div>
 {%endfor%}
 </div>

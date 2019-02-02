@@ -99,6 +99,9 @@ def registro():
         else:
             return render_template("registro_erro.html", erro='erro: É necessário aceitar os termos')
 
+@app.route('/<livro>')
+def livro(livro):
+    return render_template('book.html')
 
 
     if __name__ == "__main__":
