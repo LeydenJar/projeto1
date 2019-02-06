@@ -17,12 +17,13 @@
     }
 
     #home{
-      position: absolute;
+      position: fixed;
       top:2%;
       font-size: 17pt;
       font-family: arial;
       margin-left: 4%;
       color:#A4A4A4;
+      z-index:1;
     }
     #home:hover{
       color:LightGrey;
@@ -31,10 +32,11 @@
     #login{
       font-size:15pt;
       font-family:arial;
-      position: absolute;
+      position: fixed;
       top:2%;
       left:85%;
       color:#A4A4A4;
+      z-index:1;
     }
     #login:hover{
       color:lightgrey;
@@ -43,10 +45,11 @@
     #registro{
       font-size:15pt;
       font-family:arial;
-      position:absolute;
+      position:fixed;
       top:2%;
       left:90%;
       color:#A4A4A4;
+      z-index:1;
     }
     #registro:hover{
       color: lightgrey;
@@ -58,13 +61,14 @@
 
 </head>
   <body>
+    <a id='home'     href="{{url_for('home')}}">      Home      </a>
+    <a id='login'    href="{{url_for('login')}}">     Login     </a>
+    <a id='registro' href="{{url_for('registro')}}">  Registro  </a>
 
     {%block body%}
     {%endblock%}
 
-  <a id='home'     href="{{url_for('home')}}">      Home      </a>
-  <a id='login'    href="{{url_for('login')}}">     Login     </a>
-  <a id='registro' href="{{url_for('registro')}}">  Registro  </a>
+
 
 
 

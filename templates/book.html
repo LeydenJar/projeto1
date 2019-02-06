@@ -1,7 +1,92 @@
 {%extends 'layout.html'%}
 
+
+{%block style%}
+
+
+#info{
+  position:absolute;
+  top:20%;
+  height:30%;
+  width:98vw;
+  border: solid #F0F0F0;
+  background:#E5E5E5;
+}
+
+#imagem{
+  position:relative;
+  left:5%;
+  height:80%;
+}
+
+#título{
+  position:relative;
+  top:-78%;
+  left:28%;
+  width: 30%;
+}
+
+#texto{
+  font-size:15pt;
+  position:relative;
+  top:-70%;
+  left:34%;
+  width: 30%;
+}
+
+#reviewbox{
+  position:absolute;
+  top:65%;
+  height:20%;
+  border: solid #F0F0F0;
+  background:#E5E5E5;
+
+}
+
+#box{
+  width:80%;
+}
+
+#sub{
+  position:absolute;
+  left:83%;
+  top:0%;
+}
+
+#pitacobox{
+  position:relative;
+  top:90vh;
+  border: solid #F0F0F0;
+  background:#E5E5E5;
+  margin:0;
+}
+
+{%endblock%}
+
 {%block body%}
 
-ayehoueeeeee
+<div id='info'>
+  <img id='imagem' src='static/noImage.png'></img>
+  <h2 id= 'título'>  {{livro[0][1]}} </h2>
+  <p id='texto'>  {{livro[0][2]}}, {{livro[0][3]}}  <br/>
+  {{livro[0][0]}}</p>
+</div>
+
+<div id='reviewbox' class='col-6'>
+  <form id='review' action='/{{livro[0][1]}}' method='post'>
+    <textarea type='text' class="form-control" id="box" name="rev" rows='4' ></textarea>
+    <button type='submit' value="submit" id='sub'>Enviar Review</button>
+  </form>
+</div>
+
+<div id='pitacobox'>
+  {%for pitaco in review%}
+    <div>
+      <p>{{pitaco}}</p>
+    </div>
+  {%endfor%}
+<div>
+
+
 
 {%endblock%}

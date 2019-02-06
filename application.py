@@ -99,10 +99,19 @@ def registro():
         else:
             return render_template("registro_erro.html", erro='erro: É necessário aceitar os termos')
 
-@app.route('/<livro>')
+@app.route('/<livro>', methods=['GET','POST'])
 def livro(livro):
-    return render_template('book.html')
-
+    if request.method == 'GET':
+        bks=db.execute('SELECT * FROM books WHERE title = :book', {'book' : livro}).fetchall()
+        reviews = db.execute('SELECT pitaco FROM reviews WHERE livro = :a', {'a':livro}).fetchall()
+        return render_template('book.html', livro = bks, review=reviews)
+    else:
+        re = request.form.get('rev')
+        db.execute('INSERT INTO reviews (pitaco, livro) VALUES (:review , :livro )', {'review' : re, 'livro' : livro})
+        db.commit()
+        bks=db.execute('SELECT * FROM books WHERE title = :book', {'book' : livro}).fetchall()
+        reviews = db.execute('SELECT pitaco FROM reviews WHERE livro = :a', {'a':livro}).fetchall()
+        return render_template('book.html', livro = bks, review=reviews)
 
     if __name__ == "__main__":
         app.run()
