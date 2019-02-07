@@ -37,6 +37,7 @@
 #reviewbox{
   position:absolute;
   top:65%;
+  left:25%;
   height:20%;
   border: solid #F0F0F0;
   background:#E5E5E5;
@@ -56,12 +57,31 @@
 #pitacobox{
   position:relative;
   top:90vh;
+  left:10%;
   border: solid #F0F0F0;
   background:#E5E5E5;
   margin:0;
+  Width: 80%;
+
+}
+
+.pbox{
+  margin:30px;
+  border: solid #E6E6E6;
+  background:#F6CED8;
 }
 
 {%endblock%}
+
+{%block nav%}
+  {%if u == ""%}
+    <a id='login'    href="{{url_for('login')}}">     Login     </a>
+    <a id='registro' href="{{url_for('registro')}}">  Registro  </a>
+  {%else%}
+    <a id='logout' href="{{url_for('logout')}}">logout</a>
+  {%endif%}
+{%endblock%}
+
 
 {%block body%}
 
@@ -80,8 +100,9 @@
 </div>
 
 <div id='pitacobox'>
-  {%for pitaco in review%}
-    <div>
+  {%for pitaco, usuario in review%}
+    <div class='pbox'>
+      <h3>{{usuario}}</h3>
       <p>{{pitaco}}</p>
     </div>
   {%endfor%}

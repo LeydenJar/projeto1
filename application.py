@@ -1,6 +1,8 @@
 import os
 
-from flask import Flask, render_template, request
+from flask_sqlalchemy  import SQLAlchemy
+from flask import Flask, render_template, request, session
+from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -8,13 +10,23 @@ app = Flask(__name__)
 
 engine = create_engine("postgresql://postgres:123@localhost/projeto1db")
 db = scoped_session(sessionmaker(bind=engine))
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+app.secret_key = "secret"
 
+
+def getlog():
+    try:
+        u = session["user"]
+    except:
+        u = ""
+    return u
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
     if request.method == 'GET':
         bk = db.execute('SELECT * FROM books LIMIT 15')
-        return render_template("home.html", bk=bk)
+        return render_template("home.html", bk=bk, u=getlog())
     else:
         tipo= request.form.get('tipo')
         input= request.form.get('input')
@@ -28,13 +40,13 @@ def home():
             bk = db.execute('SELECT * FROM books WHERE year = :y LIMIT 15', {"y": input})
         else:
             bk = db.execute('SELECT * FROM books WHERE isbn ILIKE :isbn LIMIT 15', {"isbn": '%'+input+'%'})
-        return render_template("home.html", bk=bk)
+        return render_template("home.html", bk=bk, u=getlog())
 
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method=='GET':
-        return render_template("login.html")
+        return render_template("login.html", u=getlog())
     else:
             user     = request.form.get("username")
             password = request.form.get("password")
@@ -43,15 +55,20 @@ def login():
                  {"user":user, "pass":password}
                                                     ).fetchall()
             if v != []:
-                return render_template("home.html")
+                session["user"] = user
+                session["password"] = password
+                bk = db.execute('SELECT * FROM books LIMIT 15')
+                return render_template("home.html", bk=bk, u=getlog())
             else:
-                return render_template("login_erro.html", erro='usuário ou senha incorretos')
+                return render_template("login_erro.html", erro='usuário ou senha incorretos', u=getlog())
+
+
 
 
 @app.route("/registro", methods=['POST', 'GET'])
 def registro():
     if request.method == 'GET':
-        return render_template("registro.html")
+        return render_template("registro.html", u=getlog())
     else:
         #Comparando e-mails #verificando se o email ja consta no db
         email = request.form.get('e-mail')
@@ -87,31 +104,66 @@ def registro():
             db.execute("INSERT INTO users(username, password, email) VALUES (:user, :pass, :email)",
             {"user":usuario, "pass":senha, "email":email})
             db.commit()
-            return render_template("sucesso.html")
+            return render_template("sucesso.html", u=getlog())
         elif tamanho_senha<=5 or tamanho_username<=5:
-            return render_template("registro_erro.html", erro='erro: usuario e senha devem ter no minimo 6 caracteres')
+            erro='erro: usuario e senha devem ter no minimo 6 caracteres'
         elif not vemail:
-            return render_template("registro_erro.html", erro='erro: os e-mails digitados são diferentes')
+            erro='erro: os e-mails digitados são diferentes'
         elif not userv:
-            return render_template("registro_erro.html", erro='erro: O username ja existe, escolha outro')
+            erro='erro: O username ja existe, escolha outro'
         elif not emailv:
-            return render_template("registro_erro.html", erro='erro: O email ja existe, escolha outro')
+            erro='erro: O email ja existe, escolha outro'
         else:
-            return render_template("registro_erro.html", erro='erro: É necessário aceitar os termos')
+            erro='erro: É necessário aceitar os termos'
+
+        return render_template("registro_erro.html", erro=erro, u=getlog())
 
 @app.route('/<livro>', methods=['GET','POST'])
 def livro(livro):
-    if request.method == 'GET':
-        bks=db.execute('SELECT * FROM books WHERE title = :book', {'book' : livro}).fetchall()
-        reviews = db.execute('SELECT pitaco FROM reviews WHERE livro = :a', {'a':livro}).fetchall()
-        return render_template('book.html', livro = bks, review=reviews)
-    else:
-        re = request.form.get('rev')
-        db.execute('INSERT INTO reviews (pitaco, livro) VALUES (:review , :livro )', {'review' : re, 'livro' : livro})
-        db.commit()
-        bks=db.execute('SELECT * FROM books WHERE title = :book', {'book' : livro}).fetchall()
-        reviews = db.execute('SELECT pitaco FROM reviews WHERE livro = :a', {'a':livro}).fetchall()
-        return render_template('book.html', livro = bks, review=reviews)
+    if request.method == 'POST':
+
+        user = session["user"]
+
+
+        #caso o usuário não esteja logado, retorne um erro
+        if user == "":
+            return render_template("login_erro.html", erro='Erro: faça login para deixar seus reviews', u=getlog())
+
+        else:
+            #confira se o usuario ja deixou um review
+            p=db.execute("SELECT * FROM reviews WHERE usuario = :u", {'u' : session["user"]}).fetchall()
+
+            re = request.form.get('rev')
+
+
+            #se ele não deixou nenhum review, crie o review dele
+            if p == []:
+                db.execute('INSERT INTO reviews (pitaco, livro, usuario) VALUES (:review , :livro , :usuario)', {'review' : re, 'livro' : livro, 'usuario':session['user']})
+                db.commit()
+
+            #se ele ja deixou, atualize.
+            else:
+                db.execute('UPDATE reviews SET pitaco = :review WHERE usuario = :u', {'review': re, 'u': session['user']})
+                db.commit()
+
+
+    bks=db.execute('SELECT * FROM books WHERE title = :book', {'book' : livro}).fetchall()
+    reviews = db.execute('SELECT pitaco, usuario FROM reviews WHERE livro = :a', {'a':livro}).fetchall()
+    return render_template('book.html', livro = bks, review=reviews, u=getlog())
+
+
+
+@app.route('/logout')
+def logout():
+    session["user"]=""
+    bk=db.execute("SELECT * FROM books LIMIT 15")
+    return render_template("home.html", bk=bk, u=getlog())
+
+
+
+
+
+
 
     if __name__ == "__main__":
         app.run()

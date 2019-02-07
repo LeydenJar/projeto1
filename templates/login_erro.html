@@ -76,6 +76,15 @@ input{
 
 {%endblock%}
 
+{%block nav%}
+  {%if u == ""%}
+    <a id='login'    href="{{url_for('login')}}">     Login     </a>
+    <a id='registro' href="{{url_for('registro')}}">  Registro  </a>
+  {%else%}
+    <a id='logout' href="{{url_for('logout')}}">logout</a>
+  {%endif%}
+{%endblock%}
+
 {%block body%}
 <div class="fundo-out">
   <div class="fundo-in">

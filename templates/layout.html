@@ -55,6 +55,19 @@
       color: lightgrey;
     }
 
+    #logout{
+      font-size:15pt;
+      font-family:arial;
+      position:fixed;
+      top:2%;
+      left:90%;
+      color:#A4A4A4;
+      z-index:1;
+    }
+    #logout:hover{
+      color: lightgrey;
+    }
+
     {%block style%}
     {%endblock%}
     </style>
@@ -62,16 +75,12 @@
 </head>
   <body>
     <a id='home'     href="{{url_for('home')}}">      Home      </a>
-    <a id='login'    href="{{url_for('login')}}">     Login     </a>
-    <a id='registro' href="{{url_for('registro')}}">  Registro  </a>
-
-    {%block body%}
+    {%block nav%}
     {%endblock%}
 
 
-
-
-
+    {%block body%}
+    {%endblock%}
 
   </body>
 </html>
