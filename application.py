@@ -1,10 +1,11 @@
 import os
 
 from flask_sqlalchemy  import SQLAlchemy
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+import requests
 
 app = Flask(__name__)
 
@@ -31,15 +32,18 @@ def home():
         tipo= request.form.get('tipo')
         input= request.form.get('input')
         if input == '':
-            bk = db.execute('SELECT * FROM books LIMIT 15')
+            bk = db.execute('SELECT * FROM books LIMIT 15').fetchall()
         elif tipo == 'autor':
-            bk = db.execute('SELECT * FROM books WHERE author ILIKE :autor LIMIT 15', {"autor": '%'+input+'%'})
+            bk = db.execute('SELECT * FROM books WHERE author ILIKE :autor LIMIT 15', {"autor": '%'+input+'%'}).fetchall()
         elif tipo == 'livro':
-            bk = db.execute('SELECT * FROM books WHERE title ILIKE :livro LIMIT 15', {"livro": '%'+input+'%'})
+            bk = db.execute('SELECT * FROM books WHERE title ILIKE :livro LIMIT 15', {"livro": '%'+input+'%'}).fetchall()
         elif tipo == 'ano':
-            bk = db.execute('SELECT * FROM books WHERE year = :y LIMIT 15', {"y": input})
+            bk = db.execute('SELECT * FROM books WHERE year = :y LIMIT 15', {"y": input}).fetchall()
         else:
-            bk = db.execute('SELECT * FROM books WHERE isbn ILIKE :isbn LIMIT 15', {"isbn": '%'+input+'%'})
+            bk = db.execute('SELECT * FROM books WHERE isbn ILIKE :isbn LIMIT 15', {"isbn": '%'+input+'%'}).fetchall()
+
+        if len(bk) == 0:
+            return render_template("home.html", bk=bk, u=getlog(), erro = "Desculpe, sua pesquisa não retornou resultados...")
         return render_template("home.html", bk=bk, u=getlog())
 
 
@@ -121,7 +125,6 @@ def registro():
 @app.route('/<livro>', methods=['GET','POST'])
 def livro(livro):
     if request.method == 'POST':
-
         user = session["user"]
 
 
@@ -134,22 +137,51 @@ def livro(livro):
             p=db.execute("SELECT * FROM reviews WHERE usuario = :u", {'u' : session["user"]}).fetchall()
 
             re = request.form.get('rev')
-
+            avaliacao = request.form.get('nota')
 
             #se ele não deixou nenhum review, crie o review dele
             if p == []:
-                db.execute('INSERT INTO reviews (pitaco, livro, usuario) VALUES (:review , :livro , :usuario)', {'review' : re, 'livro' : livro, 'usuario':session['user']})
+                db.execute('INSERT INTO reviews (pitaco, livro, usuario, avaliacao) VALUES (:review , :livro , :usuario, :avaliacao)', {'review' : re, 'livro' : livro, 'usuario':session['user'], 'avaliacao':avaliacao})
                 db.commit()
 
             #se ele ja deixou, atualize.
             else:
                 db.execute('UPDATE reviews SET pitaco = :review WHERE usuario = :u', {'review': re, 'u': session['user']})
+                db.execute('UPDATE reviews SET avaliacao = :avaliacao WHERE usuario = :u', {'avaliacao': avaliacao, 'u': session['user']})
                 db.commit()
 
 
+
+
     bks=db.execute('SELECT * FROM books WHERE title = :book', {'book' : livro}).fetchall()
-    reviews = db.execute('SELECT pitaco, usuario FROM reviews WHERE livro = :a', {'a':livro}).fetchall()
-    return render_template('book.html', livro = bks, review=reviews, u=getlog())
+    isbn = bks[0]['isbn']
+    reviews = db.execute('SELECT pitaco, usuario, avaliacao FROM reviews WHERE livro = :a', {'a':livro}).fetchall()
+    util=[]
+    avaliacao_i = 0
+    for pitaco, usuario, avaliacao in reviews:
+        util.append(avaliacao)
+    for avaliacao in util:
+        avaliacao_i += avaliacao
+
+
+
+
+    navaliacao_i = len(util)
+
+
+    # GoodreadsAPI
+    res = requests.get('http://goodreads.com/book/review_counts.json',
+            params={"key": "MroZjsvCAsem0zyWfFa3yQ", "isbns": isbn}).json()["books"][0]
+    avaliacao_g = float(res["average_rating"])
+    navaliacao_g = res["ratings_count"]
+
+
+    navaliacao = navaliacao_g + navaliacao_i
+    avaliacao = round((avaliacao_g * navaliacao_g + avaliacao_i) / navaliacao, 2)
+
+
+
+    return render_template('book.html', livro = bks, review=reviews, u=getlog(), avaliacao = avaliacao, navaliacao= navaliacao)
 
 
 
@@ -162,6 +194,33 @@ def logout():
 
 
 
+@app.route('/api/<isbn>')
+def api(isbn):
+    livro = db.execute('SELECT * FROM books WHERE isbn = :isbn', {'isbn':isbn}).fetchone()
+    if livro is None:
+        return "Erro: O livro não foi encontrado em nosso banco de dados"
+
+    res=requests.get('http://goodreads.com/book/review_counts.json',
+                params={"key": "MroZjsvCAsem0zyWfFa3yQ", "isbns": isbn}).json()["books"][0]
+    rew=db.execute('SELECT avaliacao FROM reviews').fetchall()
+    a=0
+
+
+    for i in range(len(rew)):
+        a += rew[i][0]
+        i += 1
+
+
+
+
+    return jsonify(
+    title= livro.title,
+    author= livro.author,
+    year= livro.year,
+    isbn = livro.isbn,
+    review_count= res["ratings_count"] + len(rew),
+    average_rating = round((float(res["average_rating"]) * res["ratings_count"] +  a) / (res["ratings_count"] + len(rew)), 2)
+    )
 
 
 

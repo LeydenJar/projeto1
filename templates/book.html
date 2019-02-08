@@ -46,12 +46,13 @@
 
 #box{
   width:80%;
+  resize:none;
 }
 
 #sub{
   position:absolute;
   left:83%;
-  top:0%;
+  top:13vh;
 }
 
 #pitacobox{
@@ -71,6 +72,41 @@
   background:#F6CED8;
 }
 
+#avaliação{
+  position:relative;
+  left:55%;
+  bottom: 90%;
+  width:10%;
+  z-index:1;
+}
+
+#select{
+  position:relative;
+  width:30px;
+  left:90%;
+  bottom:15vh;
+}
+
+#nota{
+  position: relative;
+  width:80px;
+  left:88%;
+  bottom:15vh;
+
+}
+
+#avaliacao{
+  width:10%;
+  height:10%;
+  position:relative;
+  left:80%;
+  bottom:10vh;
+  font-size:28pt;
+  font-weight:bold;
+  z-index:2;
+  margin:0px;
+
+}
 {%endblock%}
 
 {%block nav%}
@@ -89,21 +125,31 @@
   <img id='imagem' src='static/noImage.png'></img>
   <h2 id= 'título'>  {{livro[0][1]}} </h2>
   <p id='texto'>  {{livro[0][2]}}, {{livro[0][3]}}  <br/>
-  {{livro[0][0]}}</p>
+  {{livro[0][0]}}</p><br/>
+  <p id="avaliação">Nota:{{avaliacao}}  Opiniões:{{navaliacao}}</p>
 </div>
 
 <div id='reviewbox' class='col-6'>
   <form id='review' action='/{{livro[0][1]}}' method='post'>
     <textarea type='text' class="form-control" id="box" name="rev" rows='4' ></textarea>
+    <h5 id="nota">Nota</h5>
+    <select id='select' name='nota'>
+      <option value=1>1</option>
+      <option value=2>2</option>
+      <option value=3>3</option>
+      <option value=4>4</option>
+      <option value=5>5</option>
+    </select>
     <button type='submit' value="submit" id='sub'>Enviar Review</button>
   </form>
 </div>
 
 <div id='pitacobox'>
-  {%for pitaco, usuario in review%}
+  {%for pitaco, usuario, iavaliacao in review%}
     <div class='pbox'>
       <h3>{{usuario}}</h3>
       <p>{{pitaco}}</p>
+      <p id='avaliacao'>{{iavaliacao}}</p>
     </div>
   {%endfor%}
 <div>
