@@ -20,7 +20,7 @@ def getlog():
     try:
         u = session["user"]
     except:
-        u = ""
+        u = None
     return u
 
 @app.route("/", methods=['GET', 'POST'])
@@ -126,15 +126,13 @@ def registro():
 def livro(livro):
     if request.method == 'POST':
         user = session["user"]
-
-
         #caso o usuário não esteja logado, retorne um erro
-        if user == "":
+        if user == None:
             return render_template("login_erro.html", erro='Erro: faça login para deixar seus reviews', u=getlog())
 
         else:
             #confira se o usuario ja deixou um review
-            p=db.execute("SELECT * FROM reviews WHERE usuario = :u", {'u' : session["user"]}).fetchall()
+            p=db.execute("SELECT * FROM reviews WHERE usuario = :u AND livro = :livro", {'u' : session["user"], 'livro':livro}).fetchall()
 
             re = request.form.get('rev')
             avaliacao = request.form.get('nota')
@@ -146,13 +144,13 @@ def livro(livro):
 
             #se ele ja deixou, atualize.
             else:
-                db.execute('UPDATE reviews SET pitaco = :review WHERE usuario = :u', {'review': re, 'u': session['user']})
-                db.execute('UPDATE reviews SET avaliacao = :avaliacao WHERE usuario = :u', {'avaliacao': avaliacao, 'u': session['user']})
+                db.execute('UPDATE reviews SET pitaco = :review WHERE usuario = :u AND livro = :livro' , {'review': re, 'u': session['user'], 'livro':livro})
+                db.execute('UPDATE reviews SET avaliacao = :avaliacao WHERE usuario = :u AND livro = :livro', {'avaliacao': avaliacao, 'u': session['user'], 'livro':livro})
                 db.commit()
 
 
-
-
+    if livro == "favicon.ico":
+        return "favicon"
     bks=db.execute('SELECT * FROM books WHERE title = :book', {'book' : livro}).fetchall()
     isbn = bks[0]['isbn']
     reviews = db.execute('SELECT pitaco, usuario, avaliacao FROM reviews WHERE livro = :a', {'a':livro}).fetchall()
@@ -170,6 +168,7 @@ def livro(livro):
 
 
     # GoodreadsAPI
+
     res = requests.get('http://goodreads.com/book/review_counts.json',
             params={"key": "MroZjsvCAsem0zyWfFa3yQ", "isbns": isbn}).json()["books"][0]
     avaliacao_g = float(res["average_rating"])
@@ -187,7 +186,7 @@ def livro(livro):
 
 @app.route('/logout')
 def logout():
-    session["user"]=""
+    session["user"]=None
     bk=db.execute("SELECT * FROM books LIMIT 15")
     return render_template("home.html", bk=bk, u=getlog())
 
