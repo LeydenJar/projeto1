@@ -1,0 +1,9 @@
+flask_sqlalchemy
+flask
+flask_session
+sqlalchemy
+requests
+
+# Heroku
+psycopg2
+gunicorn==19.9.0
