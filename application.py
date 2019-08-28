@@ -9,7 +9,7 @@ import requests
 
 app = Flask(__name__)
 
-engine = create_engine("postgresql://postgres:123@localhost/projeto1db")
+engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
