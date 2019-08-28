@@ -3,4 +3,7 @@ flask
 flask_session
 sqlalchemy
 requests
-psycopg2-binary
+
+# Heroku
+psycopg2
+gunicorn==19.9.0
