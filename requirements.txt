@@ -1,1 +1,5 @@
 flask_sqlalchemy
+flask
+flask_session
+sqlalchemy
+requests
