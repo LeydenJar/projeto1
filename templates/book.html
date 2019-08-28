@@ -110,7 +110,7 @@
 {%endblock%}
 
 {%block nav%}
-  {%if u == ""%}
+  {%if u == None%}
     <a id='login'    href="{{url_for('login')}}">     Login     </a>
     <a id='registro' href="{{url_for('registro')}}">  Registro  </a>
   {%else%}
