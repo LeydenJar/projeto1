@@ -125,7 +125,10 @@ def registro():
 @app.route('/<livro>', methods=['GET','POST'])
 def livro(livro):
     if request.method == 'POST':
-        user = session["user"]
+        try:
+            user = session["user"]
+        except:
+            user = None
         #caso o usuário não esteja logado, retorne um erro
         if user == None:
             return render_template("login_erro.html", erro='Erro: faça login para deixar seus reviews', u=getlog())
